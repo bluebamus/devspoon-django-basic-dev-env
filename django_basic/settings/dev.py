@@ -39,8 +39,30 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": custom_show_toolbar,
 }
 
-INSTALLED_APPS += ["debug_toolbar"]
+INSTALLED_APPS += [
+    "debug_toolbar",
+    'django_nose',    
+    ]
+
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_OUTPUT_DIR = os.environ.get('TEST_OUTPUT_DIR', '.')
+
+# NOSE_ARGS = [
+#     '--verbosity=2',
+#     '--nologcapture',
+#     '--with-coverage',
+#     '--cover-package=app1,app2,app3',
+#     '--with-spec',
+#     '--spec-color',
+#     '--with-xunit',
+#     '--xunit-file=%s/unittests.xml' % TEST_OUTPUT_DIR,
+#     '--cover-html',
+#     '--cover-xml',
+#     '--cover-xml-file=%s/coverage.xml' % TEST_OUTPUT_DIR,
+#     "--exe",
+# ]
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
