@@ -42,6 +42,11 @@ INSTALLED_APPS = [
     'test_app',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend' # 기본 인증 백엔드
+]
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -105,6 +110,7 @@ USE_L10N = True
 USE_TZ = False #true로 선택하면 UTC 기준으로 시간이 저장됨
 # ref : https://it-eldorado.tistory.com/13
 
+# 자동으로 모델의 id 혹은 pk를 설정해줌
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 기본 로그인 페이지 URL 지정
@@ -125,3 +131,102 @@ LOGIN_REDIRECT_URL = "/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Email 관련 설정
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+
+# 소셜 로그인
+# 네이버 아웃 로그인
+NAVER_CLIENT_ID=config('NAVER_CLIENT_ID')
+NAVER_SECRET_KEY=config('NAVER_SECRET_KEY')
+
+
+'''
+윈도우 테스트시 debug level 출력 안됨, 파일 출력 안됨
+차후 버그 픽스
+
+views에서 사용 예시
+
+import logging 
+logger = logging.getLogger('django.server')
+
+# 표현식
+# https://developpaper.com/2-django-advanced-logging-function/
+
+def home(request):
+
+    logger.debug("debug!!!")
+    # logger.info('info!!!')
+    # logger.warning('warning!!!')
+    # logger.error('error!!!')
+    # logger.critical('critical!!!')
+    return HttpResponse('finish')
+'''
+
+DEFAULT_LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',            
+			'format': '[{server_time}] {message}',
+			'datefmt': '%d/%b/%Y %H:%M:%S',
+            'style': '{',
+        },
+        'standard': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': join(ROOT_DIR, 'logs/logfile.log'),
+            'maxBytes': 1024*1024*5, 
+            'backupCount': 5,
+            'formatter': 'standard',
+        },		
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+			'formatter': 'standard',            
+        },
+        'django.server': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
