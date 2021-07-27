@@ -41,17 +41,24 @@ DEBUG_TOOLBAR_CONFIG = {
 
 INSTALLED_APPS += [
     "debug_toolbar",
-    'django_nose',    
-    ]
+    "django_nose",
+    "silk",
+]
 
 
 # django-extentions로 ERP 만들때 해줘야 하는 설정
-GRAPH_MODELS = { 'all_applications' : True, 'group_models' : True, }
+GRAPH_MODELS = {
+    "all_applications": True,
+    "group_models": True,
+}
 
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+MIDDLEWARE += [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "silk.middleware.SilkyMiddleware",
+]
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-TEST_OUTPUT_DIR = os.environ.get('TEST_OUTPUT_DIR', '.')
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+TEST_OUTPUT_DIR = os.environ.get("TEST_OUTPUT_DIR", ".")
 
 # NOSE_ARGS = [
 #     '--verbosity=2',
@@ -98,3 +105,9 @@ STATICFILES_DIRS = [
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+# reference blog : https://velog.io/@kim6515516/Django-silk-%EC%84%B1%EB%8A%A5-%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC%EB%9F%AC
+# reference github : https://github.com/jazzband/django-silk
+
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = True
